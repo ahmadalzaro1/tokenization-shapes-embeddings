@@ -425,3 +425,88 @@ def test_main_calls_validate_condition():
     src = inspect.getsource(build_dataset.main)
     assert "validate_condition" in src, "main() must call validate_condition"
     assert "write_validation_report" in src, "main() must call write_validation_report"
+
+
+# ---------------------------------------------------------------------------
+# Task 2: validate_dataset.py standalone validator
+# ---------------------------------------------------------------------------
+
+def test_validate_dataset_importable():
+    """validate_dataset.py must be importable without error."""
+    import importlib
+    vd = importlib.import_module("validate_dataset")
+    assert vd is not None
+
+
+def test_validate_dataset_imports_from_build_dataset():
+    """validate_dataset must import validate_condition from build_dataset (no logic duplication)."""
+    import pathlib
+    src = pathlib.Path("validate_dataset.py").read_text(encoding="utf-8")
+    assert "from build_dataset import" in src, \
+        "validate_dataset.py must import from build_dataset"
+    assert "validate_condition" in src
+
+
+def test_validate_dataset_has_argparse():
+    """validate_dataset.py must use argparse with --condition flag."""
+    import pathlib
+    src = pathlib.Path("validate_dataset.py").read_text(encoding="utf-8")
+    assert "argparse" in src, "validate_dataset.py must use argparse"
+    assert "--condition" in src, "validate_dataset.py must have --condition argument"
+
+
+def test_validate_dataset_help(tmp_path):
+    """uv run python validate_dataset.py --help must exit 0."""
+    import subprocess
+    result = subprocess.run(
+        ["uv", "run", "python", "validate_dataset.py", "--help"],
+        capture_output=True, text=True,
+        cwd="/Users/ahmadalzaro/Desktop/Karpathy/autoresearch-arabic",
+    )
+    assert result.returncode == 0, f"--help must exit 0; got: {result.stderr}"
+    assert "--condition" in result.stdout, "--condition must appear in help output"
+
+
+def test_validate_dataset_prints_summary(tmp_path, monkeypatch):
+    """validate_dataset.main() prints 'Validation complete: N/M conditions passed'."""
+    import importlib
+    import build_dataset
+
+    # Patch validate_condition to always succeed for one condition
+    def fake_validate(condition):
+        return {
+            "shards_loadable": True,
+            "row_count_matches": True,
+            "no_empty_texts": True,
+            "char_distribution": {},
+        }
+
+    def fake_write_report(condition, results):
+        pass
+
+    monkeypatch.setattr(build_dataset, "validate_condition", fake_validate)
+    monkeypatch.setattr(build_dataset, "write_validation_report", fake_write_report)
+
+    # Reload validate_dataset so it picks up the monkeypatched build_dataset
+    import sys as _sys
+    if "validate_dataset" in _sys.modules:
+        del _sys.modules["validate_dataset"]
+    vd = importlib.import_module("validate_dataset")
+    # Patch the names in validate_dataset's namespace too
+    monkeypatch.setattr(vd, "validate_condition", fake_validate)
+    monkeypatch.setattr(vd, "write_validation_report", fake_write_report)
+
+    import io
+    from contextlib import redirect_stdout
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        try:
+            vd.main(["--condition", "d1"])
+        except SystemExit as e:
+            assert e.code == 0, f"Expected exit 0, got {e.code}"
+
+    output = buf.getvalue()
+    assert "Validation complete:" in output, \
+        f"Expected 'Validation complete:' in output; got:\n{output}"
+    assert "1/1" in output, \
+        f"Expected '1/1 conditions passed'; got:\n{output}"
