@@ -27,7 +27,7 @@ Four phases take the experiment from raw dataset through publishable paper. Phas
 Plans:
 - [ ] 01-01-PLAN.md — Test scaffold: install pytest, create tests/ with conftest fixtures and six stub tests
 - [ ] 01-02-PLAN.md — Extend build_dataset.py: tqdm download wrapper + context-window collision metric + JSON sidecar
-- [ ] 01-03-PLAN.md — Add inline validation to build_dataset.py + create validate_dataset.py standalone validator
+- [~] 01-03-PLAN.md — Add inline validation to build_dataset.py + create validate_dataset.py standalone validator (at human-verify checkpoint)
 
 ### Phase 2: Tokenizer & Baseline
 **Goal**: Each condition has a trained BPE tokenizer and a measured baseline val_bpb on identical architecture, establishing the benchmark the search will beat
@@ -66,7 +66,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Data Pipeline | 2/3 | In Progress|  |
+| 1. Data Pipeline | 2/3 | In Progress (01-03 at checkpoint) |  |
 | 2. Tokenizer & Baseline | 0/TBD | Not started | - |
 | 3. Architecture Search | 0/TBD | Not started | - |
 | 4. Analysis & Paper | 0/TBD | Not started | - |

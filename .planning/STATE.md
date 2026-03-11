@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-data-pipeline-01-02-PLAN.md
-last_updated: "2026-03-11T23:16:54.929Z"
-last_activity: 2026-03-12 — Roadmap created, planning initialized
+stopped_at: Checkpoint 01-data-pipeline-01-03-PLAN.md (human-verify Task 3)
+last_updated: "2026-03-12T00:00:00Z"
+last_activity: 2026-03-12 — Executed plan 01-03 validation suite
 progress:
   total_phases: 4
   completed_phases: 0
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-12)
 ## Current Position
 
 Phase: 1 of 4 (Data Pipeline)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-12 — Roadmap created, planning initialized
+Plan: 3 of 3 in current phase (at checkpoint — awaiting human-verify)
+Status: In progress
+Last activity: 2026-03-12 — Executed 01-03 validation suite; at human-verify checkpoint
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -68,6 +68,10 @@ Recent decisions affecting current work:
 - [Phase 01-data-pipeline]: 01-02: load_dataset_with_progress uses daemon thread — guarantees clean Ctrl+C exit without zombie threads
 - [Phase 01-data-pipeline]: 01-02: ensure_ascii=False in json.dump preserves Arabic Unicode in collision_stats.json for Phase 4 paper tables
 - [Phase 01-data-pipeline]: 01-02: top_50_ambiguous in JSON vs top_20 in txt — richer machine output for Phase 4 without changing human-readable format
+- [Phase 01-data-pipeline]: 01-03: sys.exit(1) as hard-fail from validate_condition(); caught by validate_dataset.py for complete multi-condition reporting before final exit
+- [Phase 01-data-pipeline]: 01-03: write_validation_report merges via read-update-write pattern — safe for incremental per-condition writes in main() loop
+- [Phase 01-data-pipeline]: 01-03: char_distribution is visual-only (no hard-fail) — prevents blocking pipeline on cosmetic issues while surfacing encoding problems
+- [Phase 01-data-pipeline]: 01-03: D3 gate threshold 252 entries — covers 26 letters x 9 harakat + shaddah combos + standalone harakat
 
 ### Pending Todos
 
@@ -79,6 +83,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T23:16:54.927Z
-Stopped at: Completed 01-data-pipeline-01-02-PLAN.md
+Last session: 2026-03-12T00:00:00Z
+Stopped at: Checkpoint in 01-data-pipeline-01-03-PLAN.md (Task 3: human-verify char distributions)
 Resume file: None
