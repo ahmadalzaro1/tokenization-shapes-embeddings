@@ -163,6 +163,114 @@ def test_main_uses_load_dataset_with_progress():
 # DATA-05: collision_stats.json has top_50_ambiguous and context_window_ambiguous_pct
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# DATA-05 (Wave 2 unit): context_window_collision_probability + JSON sidecar
+# ---------------------------------------------------------------------------
+
+def test_context_window_collision_probability_exists():
+    """context_window_collision_probability must be a top-level function in build_dataset."""
+    import build_dataset
+    assert hasattr(build_dataset, "context_window_collision_probability"), \
+        "build_dataset must export context_window_collision_probability"
+    import inspect
+    assert callable(build_dataset.context_window_collision_probability)
+
+
+def test_context_window_collision_probability_signature():
+    """context_window_collision_probability accepts diacritized_forms and vocalized_texts."""
+    import inspect
+    import build_dataset
+    sig = inspect.signature(build_dataset.context_window_collision_probability)
+    params = list(sig.parameters.keys())
+    assert "diacritized_forms" in params
+    assert "vocalized_texts" in params
+    assert "window_tokens" in params
+
+
+def test_context_window_collision_probability_all_ambiguous():
+    """With 100% ambiguous words, probability returns 1.0."""
+    import build_dataset
+    # Every undiacritized form has 2 diacritized variants
+    diacritized_forms = {
+        "كتب": {"كَتَبَ", "كُتِبَ"},
+        "علم": {"عِلْمٌ", "عَلِمَ"},
+        "بيت": {"بَيْتٌ", "بَيَّتَ"},
+    }
+    # 200 words of text so windows of 128 can be sampled
+    text = " ".join(list(diacritized_forms.keys()) * 200)
+    vocalized = [text]
+    result = build_dataset.context_window_collision_probability(
+        diacritized_forms, vocalized, window_tokens=10, n_samples=100, seed=42
+    )
+    assert result == 1.0, f"Expected 1.0 for all-ambiguous corpus, got {result}"
+
+
+def test_context_window_collision_probability_no_ambiguous():
+    """With zero ambiguous words, probability returns 0.0."""
+    import build_dataset
+    # Every undiacritized form has exactly 1 diacritized variant (no collision)
+    diacritized_forms = {
+        "ذهب": {"ذَهَبَ"},
+        "قال": {"قَالَ"},
+        "جاء": {"جَاءَ"},
+    }
+    text = " ".join(list(diacritized_forms.keys()) * 200)
+    vocalized = [text]
+    result = build_dataset.context_window_collision_probability(
+        diacritized_forms, vocalized, window_tokens=10, n_samples=100, seed=42
+    )
+    assert result == 0.0, f"Expected 0.0 for unambiguous corpus, got {result}"
+
+
+def test_compute_collision_stats_writes_json(tmp_path, monkeypatch):
+    """compute_collision_stats must write collision_stats.json alongside .txt."""
+    import build_dataset
+
+    # Redirect BASE_CACHE to tmp_path
+    monkeypatch.setattr(build_dataset, "BASE_CACHE", tmp_path)
+
+    # Small corpus: 3 words each with 2 diacritized forms -> all ambiguous
+    vocalized = ["كَتَبَ عِلْمٌ بَيْتٌ"] * 100
+    non_vocalized = ["كتب علم بيت"] * 100
+
+    build_dataset.compute_collision_stats(vocalized, non_vocalized)
+
+    json_path = tmp_path / "collision_stats.json"
+    assert json_path.exists(), "collision_stats.json must be written"
+
+    import json
+    with open(json_path, encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert "context_window_ambiguous_pct" in data, "must have context_window_ambiguous_pct"
+    assert "top_50_ambiguous" in data, "must have top_50_ambiguous"
+    assert "context_window_tokens" in data
+    assert data["context_window_tokens"] == 128
+
+    # Verify Arabic chars survive JSON round-trip (ensure_ascii=False)
+    for entry in data["top_50_ambiguous"]:
+        assert "word" in entry
+        assert "variants" in entry
+        # At least some Arabic chars in the word field
+        assert any('\u0600' <= c <= '\u06FF' for c in entry["word"]), \
+            f"word {entry['word']!r} should contain Arabic characters"
+
+
+def test_compute_collision_stats_txt_still_written(tmp_path, monkeypatch):
+    """compute_collision_stats must still write collision_stats.txt (unchanged format)."""
+    import build_dataset
+    monkeypatch.setattr(build_dataset, "BASE_CACHE", tmp_path)
+
+    vocalized = ["كَتَبَ عِلْمٌ"] * 50
+    non_vocalized = ["كتب علم"] * 50
+    build_dataset.compute_collision_stats(vocalized, non_vocalized)
+
+    txt_path = tmp_path / "collision_stats.txt"
+    assert txt_path.exists(), "collision_stats.txt must still be written"
+    content = txt_path.read_text(encoding="utf-8")
+    assert "Top 20 most ambiguous words" in content
+
+
 @pytest.mark.skip(reason="Requires build_dataset.py to run with Wave 2 JSON sidecar")
 def test_collision_stats_json():
     """collision_stats.json exists with top_50 ambiguous words and context_window metric."""
