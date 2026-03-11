@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-data-pipeline-01-01-PLAN.md
-last_updated: "2026-03-11T23:10:58.598Z"
+stopped_at: Completed 01-data-pipeline-01-02-PLAN.md
+last_updated: "2026-03-11T23:16:54.929Z"
 last_activity: 2026-03-12 — Roadmap created, planning initialized
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -51,6 +51,7 @@ Progress: [░░░░░░░░░░] 0%
 
 *Updated after each plan completion*
 | Phase 01-data-pipeline P01 | 2 | 3 tasks | 5 files |
+| Phase 01-data-pipeline P02 | 3 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -64,6 +65,9 @@ Recent decisions affecting current work:
 - Setup: Abdou/arabic-tashkeel-dataset chosen — MIT license, 1.5M paired vocalized/non_vocalized examples
 - [Phase 01-data-pipeline]: 01-01: Used uv add --dev pytest for lockfile-tracked dev dependency; hardcoded Quran verses as inline fixture data to eliminate network calls in tests
 - [Phase 01-data-pipeline]: 01-01: d3_shard_path fixture replicates build_atomic_mapping() inline to avoid importing untestable build_dataset.py; pytest.mark.skip used (not xfail) for cache-dependent tests
+- [Phase 01-data-pipeline]: 01-02: load_dataset_with_progress uses daemon thread — guarantees clean Ctrl+C exit without zombie threads
+- [Phase 01-data-pipeline]: 01-02: ensure_ascii=False in json.dump preserves Arabic Unicode in collision_stats.json for Phase 4 paper tables
+- [Phase 01-data-pipeline]: 01-02: top_50_ambiguous in JSON vs top_20 in txt — richer machine output for Phase 4 without changing human-readable format
 
 ### Pending Todos
 
@@ -75,6 +79,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T23:10:58.596Z
-Stopped at: Completed 01-data-pipeline-01-01-PLAN.md
+Last session: 2026-03-11T23:16:54.927Z
+Stopped at: Completed 01-data-pipeline-01-02-PLAN.md
 Resume file: None
