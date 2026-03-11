@@ -251,8 +251,56 @@ def process_condition(condition: str, texts: list[str], atomic_mapping: dict | N
     return val_shard_idx
 
 
+def context_window_collision_probability(
+    diacritized_forms: dict,
+    vocalized_texts: list[str],
+    window_tokens: int = 128,
+    n_samples: int = 10_000,
+    seed: int = 42,
+) -> float:
+    """
+    Estimate: in a random 128-token window, what fraction of tokens are homographically ambiguous?
+
+    Tokens are whitespace-split words (consistent with diacritized_forms map construction).
+    Short documents (< window_tokens words) are skipped — this biases the sample toward
+    longer classical texts (Tashkeela/Shamela). Bias is documented; see paper methods section.
+
+    Args:
+        diacritized_forms: mapping from undiacritized word -> set of diacritized variants
+        vocalized_texts: list of diacritized text strings (D1 source)
+        window_tokens: context window size in tokens (128 matches typical small-model attention window)
+        n_samples: number of windows to sample
+        seed: random seed for reproducibility
+    """
+    import random
+    rng = random.Random(seed)
+    ambiguous_token_count = 0
+    total_token_count = 0
+
+    for _ in range(n_samples):
+        doc = rng.choice(vocalized_texts)
+        words = doc.split()
+        if len(words) < window_tokens:
+            continue  # skip short docs (see docstring bias note)
+        start = rng.randint(0, len(words) - window_tokens)
+        window = words[start:start + window_tokens]
+        for w in window:
+            stripped = HARAKAT_RE.sub('', w)
+            total_token_count += 1
+            if len(diacritized_forms.get(stripped, set())) > 1:
+                ambiguous_token_count += 1
+
+    return ambiguous_token_count / total_token_count if total_token_count > 0 else 0.0
+
+
 def compute_collision_stats(vocalized: list[str], non_vocalized: list[str]):
-    """Compute homograph collision rate between diacritized and stripped forms."""
+    """Compute homograph collision rate between diacritized and stripped forms.
+
+    Outputs:
+      - collision_stats.txt: human-readable with top-20 most ambiguous words
+      - collision_stats.json: machine-readable sidecar for Phase 4 paper tables;
+        includes top-50 ambiguous words and 128-token context-window metric
+    """
     from collections import defaultdict
 
     diacritized_forms = defaultdict(set)
@@ -265,25 +313,60 @@ def compute_collision_stats(vocalized: list[str], non_vocalized: list[str]):
             diacritized_forms[nw].add(vw)
             total_words += 1
 
+    # --- Compute all stats after diacritized_forms is fully populated ---
     collision_counts = [len(v) for v in diacritized_forms.values()]
     ambiguous = sum(1 for c in collision_counts if c > 1)
     avg_collision = sum(collision_counts) / len(collision_counts) if collision_counts else 0
     max_collision = max(collision_counts) if collision_counts else 0
 
-    # Find the most ambiguous words
-    top_ambiguous = sorted(diacritized_forms.items(), key=lambda x: len(x[1]), reverse=True)[:20]
+    # Context-window collision probability (must be after full map build)
+    print("  Computing 128-token context-window collision probability (n=10,000 samples)...")
+    cw_prob = context_window_collision_probability(diacritized_forms, vocalized)
+    print(f"  Context-window ambiguous token rate: {100 * cw_prob:.2f}%")
 
+    # Top ambiguous: top-50 for JSON, top-20 for txt
+    top_ambiguous_all = sorted(
+        diacritized_forms.items(), key=lambda x: len(x[1]), reverse=True
+    )
+    top_ambiguous_50 = top_ambiguous_all[:50]
+    top_ambiguous_20 = top_ambiguous_all[:20]
+
+    # Write human-readable txt (unchanged format)
     stats_path = BASE_CACHE / "collision_stats.txt"
-    with open(stats_path, "w") as f:
+    with open(stats_path, "w", encoding="utf-8") as f:
         f.write(f"Total unique undiacritized forms: {len(diacritized_forms):,}\n")
         f.write(f"Total unique diacritized forms: {sum(collision_counts):,}\n")
         f.write(f"Ambiguous forms (>1 diacritized variant): {ambiguous:,} ({100*ambiguous/len(diacritized_forms):.1f}%)\n")
         f.write(f"Average collision rate: {avg_collision:.2f}\n")
         f.write(f"Max collision rate: {max_collision}\n")
         f.write(f"Total words analyzed: {total_words:,}\n")
+        f.write(f"Context-window ambiguous token rate (128-tok): {100 * cw_prob:.2f}%\n")
         f.write(f"\nTop 20 most ambiguous words:\n")
-        for word, variants in top_ambiguous:
+        for word, variants in top_ambiguous_20:
             f.write(f"  {word} ({len(variants)} variants): {' | '.join(sorted(variants)[:10])}\n")
+
+    # Write machine-readable JSON sidecar (Phase 4 paper tables)
+    # CRITICAL: ensure_ascii=False so Arabic chars survive JSON round-trip
+    collision_json = {
+        "total_undiacritized_forms": len(diacritized_forms),
+        "total_diacritized_forms": sum(collision_counts),
+        "ambiguous_form_count": ambiguous,
+        "ambiguous_form_pct": round(100 * ambiguous / len(diacritized_forms), 2),
+        "avg_collision_rate": round(avg_collision, 4),
+        "max_collision_rate": max_collision,
+        "total_words_analyzed": total_words,
+        "context_window_tokens": 128,
+        "context_window_ambiguous_pct": round(100 * cw_prob, 2),
+        "top_50_ambiguous": [
+            {"word": word, "variants": sorted(variants)}
+            for word, variants in top_ambiguous_50
+        ],
+    }
+    json_path = BASE_CACHE / "collision_stats.json"
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(collision_json, f, ensure_ascii=False, indent=2)
+    print(f"  Saved collision stats to: {stats_path}")
+    print(f"  Saved JSON sidecar to:    {json_path}")
 
     print(f"\nCollision statistics:")
     print(f"  Unique undiacritized forms: {len(diacritized_forms):,}")
@@ -291,7 +374,7 @@ def compute_collision_stats(vocalized: list[str], non_vocalized: list[str]):
     print(f"  Ambiguous (>1 variant):     {ambiguous:,} ({100*ambiguous/len(diacritized_forms):.1f}%)")
     print(f"  Average collision rate:     {avg_collision:.2f}x")
     print(f"  Max collision:              {max_collision}x")
-    print(f"  Saved to: {stats_path}")
+    print(f"  Context-window (128-tok):   {100 * cw_prob:.2f}% ambiguous")
 
 
 # ---------------------------------------------------------------------------
