@@ -1,0 +1,61 @@
+# Project State
+
+## Project Reference
+
+See: .planning/PROJECT.md (updated 2026-03-12)
+
+**Core value:** Prove that D3 atomic diacritical encoding closes the disambiguation tax that D2 (stripped) forces models to pay, producing a publishable result targeting ArabicNLP/EMNLP
+**Current focus:** Phase 1 — Data Pipeline
+
+## Current Position
+
+Phase: 1 of 4 (Data Pipeline)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-03-12 — Roadmap created, planning initialized
+
+Progress: [░░░░░░░░░░] 0%
+
+## Performance Metrics
+
+**Velocity:**
+- Total plans completed: 0
+- Average duration: —
+- Total execution time: 0 hours
+
+**By Phase:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| - | - | - | - |
+
+**Recent Trend:**
+- Last 5 plans: —
+- Trend: —
+
+*Updated after each plan completion*
+
+## Accumulated Context
+
+### Decisions
+
+Decisions are logged in PROJECT.md Key Decisions table.
+Recent decisions affecting current work:
+
+- Setup: MLX fork over PyTorch — proven 1.808 baseline, 13x faster eval, no PyTorch/MPS issues
+- Setup: D3 atomic PUA encoding — BPE never splits harakah from letter; ~252 combos fit in PUA range
+- Setup: Abdou/arabic-tashkeel-dataset chosen — MIT license, 1.5M paired vocalized/non_vocalized examples
+
+### Pending Todos
+
+None yet.
+
+### Blockers/Concerns
+
+- HuggingFace downloads stall on current network — may need Kaggle/SourceForge fallback for Tashkeela dataset (DATA-01)
+
+## Session Continuity
+
+Last session: 2026-03-12
+Stopped at: Roadmap and planning files created — next step is plan-phase 1
+Resume file: None
