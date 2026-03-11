@@ -56,11 +56,11 @@ Research pipeline studying how Arabic diacritical marks (harakat) should be enco
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
-| DATA-04 | Phase 1 | Pending |
-| DATA-05 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
+| DATA-03 | Phase 1 | Complete |
+| DATA-04 | Phase 1 | Complete |
+| DATA-05 | Phase 1 | Complete |
 | TOK-01 | Phase 2 | Pending |
 | TOK-02 | Phase 2 | Pending |
 | TOK-03 | Phase 2 | Pending |

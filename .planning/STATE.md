@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-03-11T22:44:55.709Z"
+stopped_at: Completed 01-data-pipeline-01-01-PLAN.md
+last_updated: "2026-03-11T23:10:58.598Z"
 last_activity: 2026-03-12 — Roadmap created, planning initialized
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 3
+  completed_plans: 1
   percent: 0
 ---
 
@@ -50,6 +50,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 01-data-pipeline P01 | 2 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -61,6 +62,8 @@ Recent decisions affecting current work:
 - Setup: MLX fork over PyTorch — proven 1.808 baseline, 13x faster eval, no PyTorch/MPS issues
 - Setup: D3 atomic PUA encoding — BPE never splits harakah from letter; ~252 combos fit in PUA range
 - Setup: Abdou/arabic-tashkeel-dataset chosen — MIT license, 1.5M paired vocalized/non_vocalized examples
+- [Phase 01-data-pipeline]: 01-01: Used uv add --dev pytest for lockfile-tracked dev dependency; hardcoded Quran verses as inline fixture data to eliminate network calls in tests
+- [Phase 01-data-pipeline]: 01-01: d3_shard_path fixture replicates build_atomic_mapping() inline to avoid importing untestable build_dataset.py; pytest.mark.skip used (not xfail) for cache-dependent tests
 
 ### Pending Todos
 
@@ -72,6 +75,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T22:44:55.707Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-data-pipeline/01-CONTEXT.md
+Last session: 2026-03-11T23:10:58.596Z
+Stopped at: Completed 01-data-pipeline-01-01-PLAN.md
+Resume file: None
