@@ -108,3 +108,77 @@ def d3_shard_path(tmp_path, tiny_arabic_texts):
                 i += 1
         pua_texts.append(''.join(result))
     return _write_shard(tmp_path / "d3" / "data" / "shard_00000.parquet", pua_texts)
+
+
+def _encode_d3(texts: list[str]) -> list[str]:
+    """Encode a list of Arabic texts to D3 PUA encoding."""
+    mapping = _build_atomic_mapping()
+    pua_texts: list[str] = []
+    for text in texts:
+        result: list[str] = []
+        i = 0
+        n = len(text)
+        while i < n:
+            if i + 2 < n and text[i:i + 3] in mapping:
+                result.append(mapping[text[i:i + 3]])
+                i += 3
+            elif i + 1 < n and text[i:i + 2] in mapping:
+                result.append(mapping[text[i:i + 2]])
+                i += 2
+            elif text[i] in mapping:
+                result.append(mapping[text[i]])
+                i += 1
+            else:
+                result.append(text[i])
+                i += 1
+        pua_texts.append("".join(result))
+    return pua_texts
+
+
+@pytest.fixture
+def tiny_corpus_parquet(tmp_path):
+    """Factory fixture that creates a tiny two-shard corpus for a given condition.
+
+    Usage in tests::
+
+        def test_something(tiny_corpus_parquet):
+            cache_root = tiny_corpus_parquet("d1")
+            # monkeypatch prepare.BASE_CACHE = str(cache_root)
+
+    Returns a callable ``make_corpus(condition: str) -> Path`` where the
+    returned Path is *tmp_path* (the cache-base root), so callers can
+    monkeypatch ``prepare.BASE_CACHE`` to point at it.
+    """
+
+    def make_corpus(condition: str) -> Path:
+        base_texts: list[str] = list(ARABIC_SAMPLE_TEXTS[:50])
+
+        if condition == "d1":
+            shard_texts = base_texts
+        elif condition == "d2":
+            shard_texts = [HARAKAT_RE.sub("", t) for t in base_texts]
+        elif condition == "d3":
+            shard_texts = _encode_d3(base_texts)
+        else:
+            raise ValueError(f"Unknown condition: {condition!r}")
+
+        data_dir: Path = tmp_path / condition / "data"
+        data_dir.mkdir(parents=True, exist_ok=True)
+
+        _write_shard(data_dir / "shard_00000.parquet", shard_texts)  # train shard
+        _write_shard(data_dir / "shard_00001.parquet", shard_texts)  # val shard
+
+        meta: Path = tmp_path / condition / "metadata.txt"
+        meta.write_text(
+            f"condition={condition}\n"
+            "train_docs=50\n"
+            "val_docs=50\n"
+            "train_shards=1\n"
+            "val_shard=1\n"
+            "val_filename=shard_00001.parquet\n",
+            encoding="utf-8",
+        )
+
+        return tmp_path
+
+    return make_corpus
