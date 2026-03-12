@@ -26,5 +26,14 @@
     "total_experiments": 71,
     "keep_count": 7,
     "crash_count": 3
+  },
+  "d1": {
+    "commit": "ab075a6",
+    "best_val_bpb": 0.66009,
+    "depth": "4",
+    "window_pattern": "SS",
+    "head_dim": "128",
+    "aspect_ratio": "26",
+    "total_batch_size": "2**15"
   }
 }
