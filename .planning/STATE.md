@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-architecture-search 03-02-PLAN.md
-last_updated: "2026-03-12T09:53:18.997Z"
+stopped_at: Completed 03-architecture-search 03-03-PLAN.md
+last_updated: "2026-03-12T17:07:05.554Z"
 last_activity: 2026-03-12 — Completed Phase 2 tokenizer-baseline (3/3 plans); D3 best baseline bpb=1.075
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 10
-  completed_plans: 8
+  completed_plans: 9
   percent: 100
 ---
 
@@ -58,6 +58,7 @@ Progress: [████████████████████] 6/6 pla
 | Phase 02-tokenizer-baseline P03 | 54 | 3 tasks | 3 files |
 | Phase 03-architecture-search P03-01 | 1 | 1 tasks | 1 files |
 | Phase 03-architecture-search P02 | 480 | 4 tasks | 4 files |
+| Phase 03 P03 | 390 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,8 @@ Recent decisions affecting current work:
 - [Phase 03-architecture-search]: D3 best config: DEPTH=2 HEAD_DIM=96 WINDOW_PATTERN=SS MATRIX_LR=0.045 val_bpb=0.889682 (17% below baseline 1.075381)
 - [Phase 03-architecture-search]: WINDOW_PATTERN=SS largest single gain (0.961->0.905); manual revert protocol used for all 61 discards due to destructive-reset hook
 - [Phase 03-architecture-search]: search_results.json uses best_val_bpb key (test requirement); extract_best.py committed on main for reuse in D1/D2 loops
+- [Phase 03]: D1 best config: DEPTH=4 ASPECT_RATIO=26 HEAD_DIM=128 WINDOW_PATTERN=SS BATCH=2^15 MATRIX_LR=0.03 ADAM_BETAS=(0.85,0.95) val_bpb=0.660090
+- [Phase 03]: D1 empirically beats D3: D1 val_bpb=0.660090 < D3 val_bpb=0.889682 — paper hypothesis D3 < D1 is empirically false; paper framing needs revision
 
 ### Pending Todos
 
@@ -104,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-12T09:53:18.995Z
-Stopped at: Completed 03-architecture-search 03-02-PLAN.md
+Last session: 2026-03-12T17:07:05.552Z
+Stopped at: Completed 03-architecture-search 03-03-PLAN.md
 Resume file: None

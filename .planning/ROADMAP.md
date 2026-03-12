@@ -79,5 +79,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Data Pipeline | 3/3 | Complete   | 2026-03-12 |
 | 2. Tokenizer & Baseline | 3/3 | Complete   | 2026-03-12 |
-| 3. Architecture Search | 1/4 | In Progress|  |
+| 3. Architecture Search | 3/4 | In Progress|  |
 | 4. Analysis & Paper | 0/TBD | Not started | - |
