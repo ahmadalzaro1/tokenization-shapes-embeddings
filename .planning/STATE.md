@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-data-pipeline-01-03-PLAN.md (Phase 1 complete)
-last_updated: "2026-03-12T00:03:48.426Z"
-last_activity: 2026-03-12 — Completed 01-03 validation suite; Phase 1 complete
+stopped_at: Completed 02-tokenizer-baseline-02-01-PLAN.md
+last_updated: "2026-03-12T00:26:17Z"
+last_activity: 2026-03-12 — Completed 02-01 Nyquist test stubs; 3 RED tests confirm Plan 02 targets
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 4
+  completed_plans: 4
   percent: 0
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Prove that D3 atomic diacritical encoding closes the disambiguation tax that D2 (stripped) forces models to pay, producing a publishable result targeting ArabicNLP/EMNLP
-**Current focus:** Phase 1 — Data Pipeline
+**Current focus:** Phase 2 — Tokenizer Baseline
 
 ## Current Position
 
-Phase: 1 of 4 (Data Pipeline) — COMPLETE
-Plan: 3 of 3 in current phase — COMPLETE
-Status: Phase 1 done, ready for Phase 2
-Last activity: 2026-03-12 — Completed 01-03 validation suite; human-verify approved
+Phase: 2 of 4 (Tokenizer Baseline)
+Plan: 1 of 3 in current phase — COMPLETE
+Status: 02-01 done; ready for 02-02 (prepare.py extensions)
+Last activity: 2026-03-12 — Completed 02-01 Nyquist test stubs; human-verify approved
 
-Progress: [██████████] 100% (Phase 1)
+Progress: [██████████] 100% (Phase 1) | [███░░░░░░░] 33% (Phase 2)
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [██████████] 100% (Phase 1)
 | Phase 01-data-pipeline P01 | 2 | 3 tasks | 5 files |
 | Phase 01-data-pipeline P02 | 3 | 2 tasks | 2 files |
 | Phase 01-data-pipeline P03 | 10 | 3 tasks | 3 files |
+| Phase 02-tokenizer-baseline P01 | 2 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,9 @@ Recent decisions affecting current work:
 - [Phase 01-data-pipeline]: 01-03: write_validation_report merges via read-update-write pattern — safe for incremental per-condition writes in main() loop
 - [Phase 01-data-pipeline]: 01-03: char_distribution is visual-only (no hard-fail) — prevents blocking pipeline on cosmetic issues while surfacing encoding problems
 - [Phase 01-data-pipeline]: 01-03: D3 gate threshold 252 entries — covers 26 letters x 9 harakat + shaddah combos + standalone harakat
+- [Phase 02-tokenizer-baseline]: 02-01: Factory fixture over pytest-parametrize — tiny_corpus_parquet yields callable make_corpus(condition) enabling monkeypatching of BASE_CACHE before corpus creation
+- [Phase 02-tokenizer-baseline]: 02-01: Unit RED tests inspect source text and argparse --help rather than running full scripts — fast, environment-independent, unambiguous about missing features
+- [Phase 02-tokenizer-baseline]: 02-01: _encode_d3 helper extracted from d3_shard_path fixture to avoid duplication in make_corpus
 
 ### Pending Todos
 
@@ -84,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-12T00:03:48.424Z
-Stopped at: Completed 01-data-pipeline-01-03-PLAN.md (Phase 1 complete)
+Last session: 2026-03-12T00:26:17Z
+Stopped at: Completed 02-tokenizer-baseline-02-01-PLAN.md
 Resume file: None

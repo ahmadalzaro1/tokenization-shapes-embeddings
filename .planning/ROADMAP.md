@@ -72,6 +72,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Data Pipeline | 3/3 | Complete   | 2026-03-12 |
-| 2. Tokenizer & Baseline | 0/3 | Planned | - |
+| 2. Tokenizer & Baseline | 1/3 | In Progress|  |
 | 3. Architecture Search | 0/TBD | Not started | - |
 | 4. Analysis & Paper | 0/TBD | Not started | - |
