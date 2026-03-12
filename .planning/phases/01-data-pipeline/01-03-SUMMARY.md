@@ -66,7 +66,7 @@ completed: 2026-03-12
 - **Duration:** ~5 min
 - **Started:** 2026-03-11T23:17:57Z
 - **Completed:** 2026-03-11T23:22:29Z
-- **Tasks:** 2 of 3 complete (Task 3 is a human-verify checkpoint — awaiting user)
+- **Tasks:** 3 of 3 complete (human-verify checkpoint approved)
 - **Files modified:** 3
 
 ## Accomplishments
@@ -135,25 +135,21 @@ None in production code. Two test fixture issues auto-fixed inline (documented a
 
 None — no external service configuration required.
 
-## Checkpoint Status
+## Human Verification
 
-Task 3 is a `human-verify` checkpoint. After running `uv run python build_dataset.py --max-examples 1000` (builds ~1000-row test dataset), run:
-
-1. `uv run python validate_dataset.py` — should show PASS for all 4 checks per condition
-2. Inspect char distribution output:
-   - D1: Arabic combining marks (harakat U+064E etc.) should appear in top-20
-   - D2: No harakat chars in top-20
-   - D3: PUA chars (codepoints in E000-EFFF range) should appear prominently
-3. `cat ~/.cache/autoresearch-arabic/validation_report.json` — should show d1/d2/d3 with all checks `true`
-
-Type "approved" in a follow-up message to complete this plan.
+Checkpoint approved 2026-03-12. User confirmed:
+- D1 character distribution shows Arabic combining marks (harakat) in top-20 as expected
+- D2 character distribution shows no harakat chars (stripping confirmed correct)
+- D3 character distribution shows PUA chars prominently in top-20
+- Full 1.46M row dataset built and validated — all mandatory checks PASSED for all 3 conditions
+- `validation_report.json` confirmed with d1/d2/d3 keys, all checks `true`
 
 ## Next Phase Readiness
 
 - Data pipeline fully validated: 4 mandatory checks + D3 gate enforced before Phase 2
 - `validation_report.json` schema is Phase 2-ready: structured per-condition with bool checks
 - Standalone `validate_dataset.py` allows re-validation at any time without rebuilding
-- Awaiting human checkpoint approval on char distribution visual checks
+- All three conditions verified at corpus scale (1.46M rows total)
 
 ---
 *Phase: 01-data-pipeline*

@@ -149,15 +149,23 @@ Alternative: use 'huggingface-cli download Abdou/arabic-tashkeel-dataset' on a s
 """
 
 
+LOCAL_DATASET_DIR = Path(__file__).parent / "arabic-tashkeel-dataset"
+
+
 def load_dataset_with_progress(name: str, split: str):
     """
-    Load a HuggingFace dataset in a background thread with a tqdm heartbeat.
-    If the download stalls, the user sees the bar is alive vs. dead.
-    On any exit (KeyboardInterrupt or exception), prints manual download instructions.
+    Load dataset from local directory if present, otherwise download from HuggingFace.
 
-    Note: Uses load_dataset() which auto-reuses ~/.cache/huggingface/datasets — no extra
-    cache layer needed. If cache is warm, returns immediately.
+    Local path: arabic-tashkeel-dataset/data/{split}-*.parquet (next to this script).
+    Falls back to HF download with a tqdm heartbeat spinner.
     """
+    if LOCAL_DATASET_DIR.exists():
+        data_files = sorted((LOCAL_DATASET_DIR / "data").glob(f"{split}-*.parquet"))
+        if data_files:
+            print(f"Loading {name} from local directory ({len(data_files)} shard(s))...")
+            from datasets import load_dataset as _load
+            return _load("parquet", data_files=[str(f) for f in data_files], split="train")
+
     result: list = [None]
     error: list = [None]
 
@@ -202,15 +210,21 @@ def process_condition(condition: str, texts: list[str], atomic_mapping: dict | N
     data_dir = BASE_CACHE / condition / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
 
+    # Filter empty/None texts from source data
+    texts = [t for t in texts if t and t.strip()]
+    print(f"  {condition}: {len(texts):,} documents after filtering empties")
+
     # Transform texts based on condition
     if condition == "d1":
         processed = texts  # keep as-is (diacritized)
     elif condition == "d2":
         print(f"  Stripping harakat from {len(texts):,} documents...")
         processed = [strip_harakat(t) for t in texts]
+        processed = [t for t in processed if t and t.strip()]
     elif condition == "d3":
         print(f"  Applying atomic encoding to {len(texts):,} documents...")
         processed = [apply_atomic_encoding(t, atomic_mapping) for t in texts]
+        processed = [t for t in processed if t and t.strip()]
     else:
         raise ValueError(f"Unknown condition: {condition}")
 
@@ -333,6 +347,7 @@ def compute_collision_stats(vocalized: list[str], non_vocalized: list[str]):
     top_ambiguous_20 = top_ambiguous_all[:20]
 
     # Write human-readable txt (unchanged format)
+    BASE_CACHE.mkdir(parents=True, exist_ok=True)
     stats_path = BASE_CACHE / "collision_stats.txt"
     with open(stats_path, "w", encoding="utf-8") as f:
         f.write(f"Total unique undiacritized forms: {len(diacritized_forms):,}\n")

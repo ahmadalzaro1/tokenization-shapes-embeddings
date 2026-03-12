@@ -6,7 +6,7 @@ Four phases take the experiment from raw dataset through publishable paper. Phas
 
 ## Phases
 
-- [ ] **Phase 1: Data Pipeline** - Download dataset, produce D1/D2/D3 parquet shards, compute homograph collision statistics
+- [x] **Phase 1: Data Pipeline** - Download dataset, produce D1/D2/D3 parquet shards, compute homograph collision statistics (completed 2026-03-12)
 - [ ] **Phase 2: Tokenizer & Baseline** - Train BPE tokenizers per condition, measure fertility, run baseline val_bpb training
 - [ ] **Phase 3: Architecture Search** - Run overnight autoresearch agent loop for D1, D2, D3 (70+ experiments each)
 - [ ] **Phase 4: Analysis & Paper** - Compare winning architectures, run ablations, write paper draft
@@ -27,7 +27,7 @@ Four phases take the experiment from raw dataset through publishable paper. Phas
 Plans:
 - [ ] 01-01-PLAN.md — Test scaffold: install pytest, create tests/ with conftest fixtures and six stub tests
 - [ ] 01-02-PLAN.md — Extend build_dataset.py: tqdm download wrapper + context-window collision metric + JSON sidecar
-- [~] 01-03-PLAN.md — Add inline validation to build_dataset.py + create validate_dataset.py standalone validator (at human-verify checkpoint)
+- [x] 01-03-PLAN.md — Add inline validation to build_dataset.py + create validate_dataset.py standalone validator
 
 ### Phase 2: Tokenizer & Baseline
 **Goal**: Each condition has a trained BPE tokenizer and a measured baseline val_bpb on identical architecture, establishing the benchmark the search will beat
@@ -66,7 +66,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Data Pipeline | 2/3 | In Progress (01-03 at checkpoint) |  |
+| 1. Data Pipeline | 3/3 | Complete   | 2026-03-12 |
 | 2. Tokenizer & Baseline | 0/TBD | Not started | - |
 | 3. Architecture Search | 0/TBD | Not started | - |
 | 4. Analysis & Paper | 0/TBD | Not started | - |
