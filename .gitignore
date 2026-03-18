@@ -29,11 +29,17 @@ handoff/
 
 # Logs
 *.log
-paper/ablation_logs/
 
 # Scratch
 search_results.json
 replicate_overnight.py
+
+# Paper drafts and ablation scripts (keep only paper/latex/)
+paper/DRAFT.md
+paper/OUTLINE.md
+paper/fixed_architecture_ablation.*
+paper/run_fixed_arch_ablation.py
+paper/ablation_logs/
 
 # Internal experiment backups
 experiments/results/originals_backup/

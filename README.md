@@ -70,11 +70,12 @@ experiments/
     bpbl_results_robust.json
     *.png                   # Figures
 
-paper/
-  latex/
-    main.tex                # ACL-format paper
-    references.bib
-    figures/                # Publication figures (PDF)
+paper/latex/
+  main.tex                  # ACL-format paper
+  main.pdf                  # Compiled PDF
+  references.bib
+  generate_figures.py       # Reproduce all figures
+  figures/                  # Publication figures (PDF)
 
 tests/                      # pytest suite
 ```
