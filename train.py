@@ -363,18 +363,18 @@ class AdamW:
 # ---------------------------------------------------------------------------
 
 # Model architecture
-ASPECT_RATIO = 64
+ASPECT_RATIO = 26
 HEAD_DIM = 128
-WINDOW_PATTERN = "SSSL"
+WINDOW_PATTERN = "SS"
 
 # v0.1: AdamW only. Muon port is future work.
-TOTAL_BATCH_SIZE = 2**16
+TOTAL_BATCH_SIZE = 2**15
 EMBEDDING_LR = 0.6
 UNEMBEDDING_LR = 0.004
-MATRIX_LR = 0.04
+MATRIX_LR = 0.03
 SCALAR_LR = 0.5
 WEIGHT_DECAY = 0.2
-ADAM_BETAS = (0.8, 0.95)
+ADAM_BETAS = (0.85, 0.95)
 WARMUP_RATIO = 0.0
 WARMDOWN_RATIO = 0.5
 FINAL_LR_FRAC = 0.0
@@ -396,7 +396,7 @@ def get_lr_multiplier(progress):
 
 
 t_start = time.time()
-mx.random.seed(42)
+mx.random.seed(int(os.environ.get("AUTORESEARCH_SEED", "42")))
 
 tokenizer = Tokenizer.from_directory()
 vocab_size = tokenizer.get_vocab_size()
@@ -466,7 +466,11 @@ while True:
     if grad_accum_steps > 1:
         accum_grads = tree_map(lambda grad: grad * (1.0 / grad_accum_steps), accum_grads)
 
-    progress = min(total_training_time / TIME_BUDGET, 1.0)
+    _max_steps = int(os.environ.get("AUTORESEARCH_MAX_STEPS", "0"))
+    if _max_steps > 0:
+        progress = min(step / _max_steps, 1.0)
+    else:
+        progress = min(total_training_time / TIME_BUDGET, 1.0)
     lrm = get_lr_multiplier(progress)
     optimizer.set_lr_multiplier(lrm)
     optimizer.update(model, accum_grads)
@@ -504,7 +508,11 @@ while True:
         gc.collect()
 
     step += 1
-    if step >= STARTUP_EXCLUDE_STEPS and total_training_time >= TIME_BUDGET:
+    _max_steps = int(os.environ.get("AUTORESEARCH_MAX_STEPS", "0"))
+    if _max_steps > 0:
+        if step >= _max_steps:
+            break
+    elif step >= STARTUP_EXCLUDE_STEPS and total_training_time >= TIME_BUDGET:
         break
 
 print()
@@ -514,7 +522,7 @@ print(f"Training completed in {t_train - t_compiled:.1f}s")
 total_tokens = step * TOTAL_BATCH_SIZE
 print("Starting final eval...")
 print(f"Final eval batch size: {FINAL_EVAL_BATCH_SIZE}")
-val_bpb = evaluate_bpb(model, tokenizer, FINAL_EVAL_BATCH_SIZE)
+val_bpb, total_eval_nats, total_eval_bytes, total_valid_tokens = evaluate_bpb(model, tokenizer, FINAL_EVAL_BATCH_SIZE)
 t_eval = time.time()
 print(f"Final eval completed in {t_eval - t_train:.1f}s")
 
@@ -556,4 +564,16 @@ print(f"mfu_percent:      {steady_state_mfu:.2f}")
 print(f"total_tokens_M:   {total_tokens / 1e6:.1f}")
 print(f"num_steps:        {step}")
 print(f"num_params_M:     {num_params / 1e6:.1f}")
+print(f"total_eval_nats:  {total_eval_nats:.6f}")
+print(f"total_eval_bytes: {total_eval_bytes}")
+print(f"total_valid_tokens: {total_valid_tokens}")
 print(f"depth:            {DEPTH}")
+
+# Save wte embedding matrix if requested
+_wte_path = os.environ.get("AUTORESEARCH_SAVE_WTE", "")
+if _wte_path:
+    import numpy as np
+    mx.eval(model.wte.weight)  # force lazy evaluation before numpy conversion
+    wte_np = np.array(model.wte.weight.astype(mx.float32))
+    np.save(_wte_path, wte_np)
+    print(f"wte_saved: {_wte_path}")

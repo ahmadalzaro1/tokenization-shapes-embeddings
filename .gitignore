@@ -1,0 +1,48 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Testing
+.pytest_cache/
+
+# Data (download from HuggingFace: Abdou/arabic-tashkeel-dataset)
+arabic-tashkeel-dataset/
+data/
+
+# Upstream framework (see: trevin-creator/autoresearch-mlx)
+autoresearch-mlx/
+
+# Internal dev docs
+.planning/
+handoff/
+
+# Claude
+.claude/
+
+# Logs
+*.log
+paper/ablation_logs/
+
+# Scratch
+search_results.json
+replicate_overnight.py
+
+# Internal experiment backups
+experiments/results/originals_backup/
+experiments/results/phase-05/
+
+# Numpy weights
+*.npy
+
+# Secrets
+.env
+*.pem
+*.key

@@ -323,6 +323,7 @@ def evaluate_bpb(model, tokenizer, batch_size):
     steps = EVAL_TOKENS // (batch_size * MAX_SEQ_LEN)
     total_nats = 0.0
     total_bytes = 0
+    total_valid_tokens = 0
     for _ in range(steps):
         x, y, _ = next(val_loader)
         loss_flat = model(x, y, reduction="none").reshape(-1)
@@ -331,9 +332,11 @@ def evaluate_bpb(model, tokenizer, batch_size):
         mask = nbytes > 0
         total_nats += mx.sum(loss_flat * mask).item()
         total_bytes += int(mx.sum(nbytes).item())
+        total_valid_tokens += int(mx.sum(mask).item())
     if total_bytes == 0:
-        return float("inf")
-    return total_nats / (math.log(2) * total_bytes)
+        return (float("inf"), 0.0, 0, 0)
+    bpb = total_nats / (math.log(2) * total_bytes)
+    return bpb, total_nats, total_bytes, total_valid_tokens
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,114 @@
+{
+  "architectures": {
+    "d1": {
+      "d1": {
+        "val_bpb": 0.700745,
+        "peak_vram_mb": 19043.7,
+        "total_tokens_M": 28.8,
+        "num_params_M": 5.0,
+        "training_seconds": 300.3,
+        "memory_gb": 18.59736328125,
+        "log_path": "paper/ablation_logs/d1_on_d1.log",
+        "shared_architecture": "d1",
+        "condition": "d1"
+      },
+      "d2": {
+        "val_bpb": 1.052422,
+        "peak_vram_mb": 19043.7,
+        "total_tokens_M": 29.9,
+        "num_params_M": 5.0,
+        "training_seconds": 300.2,
+        "memory_gb": 18.59736328125,
+        "log_path": "paper/ablation_logs/d1_on_d2.log",
+        "shared_architecture": "d1",
+        "condition": "d2"
+      },
+      "d3": {
+        "val_bpb": 0.837692,
+        "peak_vram_mb": 19043.7,
+        "total_tokens_M": 32.2,
+        "num_params_M": 5.0,
+        "training_seconds": 300.0,
+        "memory_gb": 18.59736328125,
+        "log_path": "paper/ablation_logs/d1_on_d3.log",
+        "shared_architecture": "d1",
+        "condition": "d3"
+      }
+    },
+    "d2": {
+      "d1": {
+        "val_bpb": 0.680836,
+        "peak_vram_mb": 19043.7,
+        "total_tokens_M": 29.9,
+        "num_params_M": 5.0,
+        "training_seconds": 300.2,
+        "memory_gb": 18.59736328125,
+        "log_path": "paper/ablation_logs/d2_on_d1.log",
+        "shared_architecture": "d2",
+        "condition": "d1"
+      },
+      "d2": {
+        "val_bpb": 1.03662,
+        "peak_vram_mb": 19043.7,
+        "total_tokens_M": 28.8,
+        "num_params_M": 5.0,
+        "training_seconds": 300.2,
+        "memory_gb": 18.59736328125,
+        "log_path": "paper/ablation_logs/d2_on_d2.log",
+        "shared_architecture": "d2",
+        "condition": "d2"
+      },
+      "d3": {
+        "val_bpb": 0.930068,
+        "peak_vram_mb": 19043.7,
+        "total_tokens_M": 14.5,
+        "num_params_M": 5.0,
+        "training_seconds": 300.8,
+        "memory_gb": 18.59736328125,
+        "log_path": "paper/ablation_logs/d2_on_d3.log",
+        "shared_architecture": "d2",
+        "condition": "d3"
+      }
+    },
+    "d3": {
+      "d1": {
+        "val_bpb": 1.03733,
+        "peak_vram_mb": 20333.6,
+        "total_tokens_M": 6.9,
+        "num_params_M": 5.6,
+        "training_seconds": 300.4,
+        "memory_gb": 19.85703125,
+        "log_path": "paper/ablation_logs/d3_on_d1.log",
+        "shared_architecture": "d3",
+        "condition": "d1"
+      },
+      "d2": {
+        "val_bpb": 1.403904,
+        "peak_vram_mb": 16887.4,
+        "total_tokens_M": 6.6,
+        "num_params_M": 5.6,
+        "training_seconds": 301.4,
+        "memory_gb": 16.4916015625,
+        "log_path": "paper/ablation_logs/d3_on_d2.log",
+        "shared_architecture": "d3",
+        "condition": "d2"
+      },
+      "d3": {
+        "val_bpb": 1.28997,
+        "peak_vram_mb": 19565.0,
+        "total_tokens_M": 6.5,
+        "num_params_M": 5.6,
+        "training_seconds": 300.1,
+        "memory_gb": 19.1064453125,
+        "log_path": "paper/ablation_logs/d3_on_d3.log",
+        "shared_architecture": "d3",
+        "condition": "d3"
+      }
+    }
+  },
+  "summary": {
+    "d1": "D1 < D3 < D2",
+    "d2": "D1 < D3 < D2",
+    "d3": "D1 < D3 < D2"
+  }
+}
