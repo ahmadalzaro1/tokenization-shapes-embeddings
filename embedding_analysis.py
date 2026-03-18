@@ -13,10 +13,6 @@ Usage:
 import sys
 from pathlib import Path
 
-# Critical: fix sys.path so 'import prepare' and 'from experiments.shared import ...' work
-# when executed as 'uv run python experiments/exp4_embedding.py'
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 import json
 import math
 import re
@@ -31,13 +27,13 @@ from sklearn.decomposition import PCA
 
 import prepare
 from prepare import Tokenizer
-from experiments.shared import ARABIC_LETTER_RE
+from shared import ARABIC_LETTER_RE
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 ROOT = Path(__file__).resolve().parent.parent
-RESULTS_DIR = ROOT / "experiments" / "results"
+RESULTS_DIR = ROOT / "results"
 CACHE_DIR = Path.home() / ".cache" / "autoresearch-arabic"
 
 # HARAKAT codepoints (from build_dataset.py)
@@ -486,7 +482,7 @@ def plot_d3_heatmap(bpbl_data: dict, d3_result: dict) -> None:
     fig.colorbar(im, ax=axes, shrink=0.6, label="Cosine Similarity")
     plt.tight_layout(rect=[0, 0, 0.92, 0.95])
 
-    out_path = RESULTS_DIR / "d3_embedding_heatmap.png"
+    out_path = ROOT / "assets" / "d3_embedding_heatmap.png"
     fig.savefig(out_path, dpi=300, bbox_inches='tight')
     plt.close(fig)
     print(f"  Saved: {out_path}", flush=True)
@@ -655,7 +651,7 @@ def plot_embedding_space_pca(bpbl_data: dict) -> None:
     ax2.legend(fontsize=8, loc='best')
 
     plt.tight_layout(rect=[0, 0, 1, 0.95])
-    out_path = RESULTS_DIR / "embedding_space_comparison.png"
+    out_path = ROOT / "assets" / "embedding_space_comparison.png"
     fig.savefig(out_path, dpi=300, bbox_inches='tight')
     plt.close(fig)
     print(f"  Saved: {out_path}", flush=True)
@@ -692,7 +688,7 @@ def plot_per_letter_bar_chart(d3_result: dict) -> None:
     ax.set_ylim(bottom=min(0, min(values) - 0.05))
 
     plt.tight_layout()
-    out_path = RESULTS_DIR / "d3_per_letter_similarity.png"
+    out_path = ROOT / "assets" / "d3_per_letter_similarity.png"
     fig.savefig(out_path, dpi=300, bbox_inches='tight')
     plt.close(fig)
     print(f"  Saved: {out_path}", flush=True)

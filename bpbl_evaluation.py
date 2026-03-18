@@ -12,16 +12,13 @@ Usage:
 import sys
 from pathlib import Path
 
-# Critical: fix sys.path so 'import prepare' and 'from experiments.shared import ...' work
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 import json
 import math
 import os
 import subprocess
 
 import prepare
-from experiments.shared import (
+from shared import (
     BASELINE_JSON,
     ROOT,
     TRAIN_PATH,
@@ -39,7 +36,7 @@ D3_COMMIT = "532b0d1"
 FERTILITIES = {"d1": 2.5189, "d3": 2.1934}
 NEW_SEEDS = [0, 1, 3, 5, 7, 11, 13]
 
-RESULTS_DIR = ROOT / "experiments" / "results"
+RESULTS_DIR = ROOT / "results"
 EXISTING_RESULTS_JSON = RESULTS_DIR / "phase-05" / "bpbl_results.json"
 ROBUST_RESULTS_JSON = RESULTS_DIR / "bpbl_results_robust.json"
 

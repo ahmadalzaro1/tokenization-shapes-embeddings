@@ -12,17 +12,13 @@ Usage:
 import sys
 from pathlib import Path
 
-# Critical: fix sys.path so 'import prepare' and 'from experiments.shared import ...' work
-# when executed as 'uv run python experiments/exp5_iso_data.py'
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 import json
 import math
 import os
 import subprocess
 
 import prepare
-from experiments.shared import (
+from shared import (
     BASELINE_JSON,
     ROOT,
     TRAIN_PATH,
@@ -44,7 +40,7 @@ BUDGETS = [5_000_000, 15_000_000, 30_000_000, 50_000_000, 100_000_000, 200_000_0
 TOTAL_BATCH_SIZE = 32768
 EVAL_WORDS = 2_990_668
 
-RESULTS_DIR = ROOT / "experiments" / "results"
+RESULTS_DIR = ROOT / "results"
 LOG_DIR = RESULTS_DIR / "iso_data_logs"
 RESULTS_JSON = RESULTS_DIR / "iso_data_results.json"
 
@@ -147,7 +143,7 @@ def plot_scaling_curves(results: dict) -> None:
             ax.set_xscale("log")
 
         fig.tight_layout()
-        out_path = RESULTS_DIR / f"iso_data_scaling_curves{suffix}.png"
+        out_path = ROOT / "assets" / f"iso_data_scaling_curves{suffix}.png"
         fig.savefig(str(out_path), dpi=300)
         plt.close(fig)
         print(f"Plot saved: {out_path}", flush=True)

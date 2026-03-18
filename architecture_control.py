@@ -22,15 +22,13 @@ Usage:
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 import json
 import math
 import os
 import subprocess
 
 import prepare
-from experiments.shared import (
+from shared import (
     BASELINE_JSON,
     ROOT,
     TRAIN_PATH,
@@ -52,7 +50,7 @@ BUDGETS = [5_000_000, 15_000_000, 30_000_000, 50_000_000, 100_000_000, 200_000_0
 TOTAL_BATCH_SIZE = 32768
 EVAL_WORDS = 2_990_668
 
-RESULTS_DIR = ROOT / "experiments" / "results"
+RESULTS_DIR = ROOT / "results"
 EXP5_RESULTS_JSON = RESULTS_DIR / "iso_data_results.json"         # source for d1_optimal + d3_optimal
 LOG_DIR = RESULTS_DIR / "iso_data_logs_d3_d1arch"                 # logs for new d3_d1arch runs only
 RESULTS_JSON = RESULTS_DIR / "iso_data_results_arch_comparison.json"
@@ -151,7 +149,7 @@ def plot_arch_comparison(results: dict) -> None:
             ax.set_xscale("log")
 
         fig.tight_layout()
-        out_path = RESULTS_DIR / f"iso_data_arch_comparison{suffix}.png"
+        out_path = ROOT / "assets" / f"iso_data_arch_comparison{suffix}.png"
         fig.savefig(str(out_path), dpi=300)
         plt.close(fig)
         print(f"Plot saved: {out_path}", flush=True)

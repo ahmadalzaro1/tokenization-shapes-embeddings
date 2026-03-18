@@ -69,7 +69,7 @@ architecture_control.py  # Architecture confound control
 paper.pdf                # Compiled paper
 assets/                  # Figures for README
 results/                 # Raw experiment data (JSONs)
-experiments/shared.py    # Shared utilities for experiment scripts
+shared.py                # Shared utilities for experiment scripts
 tests/                   # pytest suite
 ```
 
